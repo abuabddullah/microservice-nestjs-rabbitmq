@@ -8,18 +8,21 @@ async function bootstrap() {
 
   const logger = new Logger('MediaBootstrap');
 
-  const port = process.env.MEDIA_TCP_PORT
-    ? parseInt(process.env.MEDIA_TCP_PORT, 10)
-    : 4013;
+  const rmqUrl = process.env.RABBITMQ_URL ?? 'amqp://localhost:5672';
+
+  const queue = process.env.MEDIA_QUEUE ?? 'media_queue';
 
   //create an microservices instance
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     MediaModule,
     {
-      transport: Transport.TCP,
+      transport: Transport.RMQ,
       options: {
-        host: '0.0.0.0',
-        port,
+        urls: [rmqUrl],
+        queue,
+        queueOptions: {
+          durable: false,
+        },
       },
     },
   );
@@ -28,7 +31,9 @@ async function bootstrap() {
 
   await app.listen();
 
-  logger.log(`Media Microservice [TCP] listening on port ${port}`);
+  logger.log(
+    `Media Microservice [RMQ] listening on queue ${queue} via ${rmqUrl}`,
+  );
 }
 
 bootstrap();
