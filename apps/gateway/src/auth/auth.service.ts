@@ -1,24 +1,7 @@
 import { createClerkClient, verifyToken } from '@clerk/backend';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserContext } from './auth.types';
+import { IAuthVerifiedToken, TAuthPayload, UserContext } from './auth.types';
 import { USER_ROLE } from '../users/user.enum';
-
-type Payload = {
-  sub?: string;
-  userId?: string;
-  email?: string;
-  email_address?: string;
-  primaryEmailAddress?: string;
-  name?: string;
-  fullName?: string;
-  username?: string;
-  [key: string]: unknown;
-};
-
-interface VerifiedToken {
-  payload?: Payload;
-  [key: string]: unknown;
-}
 
 @Injectable()
 export class AuthService {
@@ -38,11 +21,11 @@ export class AuthService {
       const verified = (await verifyToken(
         token,
         this.jwtVerifyOptions(),
-      )) as VerifiedToken;
+      )) as IAuthVerifiedToken;
 
       // // decoded payload
       //   const payload = verified?.payload ?? verified?.payload ?? verified;
-      const payload = (verified.payload ?? verified) as Payload;
+      const payload = (verified.payload ?? verified) as TAuthPayload;
 
       // clerk user id -> payload.sub
       const clerkUserId = payload?.sub ?? payload?.userId;
