@@ -13,16 +13,20 @@ export class ProductService {
   ) {}
 
   async createNewProduct(input: CreateProductDto) {
-    const newlyCreatedProduct = await this.productModel.create({
-      name: input.name,
-      description: input.description,
-      price: input.price,
-      status: input.status ?? 'DRAFT',
-      imageUrl: input.imageUrl ?? '',
-      createdByClerkUserId: input.createdByClerkUserId,
-    });
+    try {
+      const newlyCreatedProduct = await this.productModel.create({
+        name: input.name,
+        description: input.description,
+        price: input.price,
+        status: input.status ?? 'DRAFT',
+        imageUrl: input.imageUrl ?? '',
+        createdByClerkUserId: input.createdByClerkUserId,
+      });
 
-    return newlyCreatedProduct;
+      return newlyCreatedProduct;
+    } catch (error) {
+      console.log('🚀 ~ ProductService ~ createNewProduct ~ error:', error);
+    }
   }
 
   async listProducts() {
