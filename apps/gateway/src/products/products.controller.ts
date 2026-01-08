@@ -18,7 +18,7 @@ import { Public } from '../auth/decorators/public.decorator';
 import { AdminOnly } from '../auth/decorators/admin.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-type TProduct = {
+export type TProduct = {
   _id: string;
   name: string;
   description: string;
