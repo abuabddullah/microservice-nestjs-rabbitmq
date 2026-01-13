@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Product, ProductSchema } from './products/product.schema';
 import { ProductController } from './products/product.controller';
 import { ProductService } from './products/products.service';
+import { ProductEventsPubliser } from './events/product-events.publiser';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
@@ -32,6 +33,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ]),
   ],
   controllers: [CatalogController, ProductController],
-  providers: [CatalogService, ProductService],
+  providers: [CatalogService, ProductService, ProductEventsPubliser],
 })
 export class CatalogModule {}
