@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { rpcBadRequest, rpcNotFound } from '@app/rpc';
 import { UploadApiResponse } from 'cloudinary';
 import { UploadProductImageDto } from './media.dto';
+import type { TProductDeletedEvent } from 'apps/catalog/src/events/product.events';
 
 @Injectable()
 export class MediaService {
@@ -100,6 +101,21 @@ export class MediaService {
       url: updated.url,
       publicId: updated.publicId,
     };
+  }
+
+  async deleteMediaOnProductDelete(input: TProductDeletedEvent) {
+    try {
+      const deletedMedia = await this.mediaModel.findOneAndDelete({
+        productId: input.productId,
+      });
+      if (deletedMedia?.publicId) {
+        await this.cloudinary.uploader.destroy(deletedMedia.publicId);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+    console.log('Media doc deleted as soon as product is deleted');
   }
 
   ping() {

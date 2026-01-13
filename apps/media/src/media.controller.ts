@@ -1,7 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { MediaService } from './media.service';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { AttachToProductDto, UploadProductImageDto } from './media.dto';
+import type { TProductDeletedEvent } from 'apps/catalog/src/events/product.events';
 
 @Controller()
 export class MediaController {
@@ -15,6 +16,13 @@ export class MediaController {
   @MessagePattern('media.attachToProduct')
   attachToProduct(@Payload() payload: AttachToProductDto) {
     return this.mediaService.attachToProduct(payload);
+  }
+
+  @EventPattern('product.deleted')
+  async onProductDeleted(@Payload() payload: TProductDeletedEvent) {
+    await this.mediaService.deleteMediaOnProductDelete({
+      productId: payload.productId,
+    });
   }
 
   @Get()

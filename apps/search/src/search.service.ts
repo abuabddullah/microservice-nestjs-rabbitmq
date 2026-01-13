@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SearchProduct, SearchProductDocument } from './search-index-schema';
 import { Model } from 'mongoose';
+import type { TProductDeletedEvent } from 'apps/catalog/src/events/product.events';
 
 @Injectable()
 export class SearchService {
@@ -50,6 +51,16 @@ export class SearchService {
     }
 
     console.log('Search doc added as soon as product is created');
+  }
+
+  async deleteFromCatalogEvent(input: TProductDeletedEvent) {
+    try {
+      await this.model.findOneAndDelete({ productId: input.productId });
+    } catch (err) {
+      console.log(err);
+    }
+
+    console.log('Search doc deleted as soon as product is deleted');
   }
 
   async query(input: { q: string; limit?: number }) {

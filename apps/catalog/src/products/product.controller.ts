@@ -21,4 +21,9 @@ export class ProductController {
   getbyId(@Payload() payload: GetProductByIdDto) {
     return this.productsService.getProductById(payload);
   }
+
+  @MessagePattern('product.delete')
+  delete(@Payload() payload: GetProductByIdDto) {
+    return this.productsService.deleteProduct(payload);
+  }
 }

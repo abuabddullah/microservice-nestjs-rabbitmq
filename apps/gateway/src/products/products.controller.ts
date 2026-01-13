@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
@@ -132,6 +133,18 @@ export class ProductsHttpController {
     try {
       return await firstValueFrom(
         this.catalogClient.send('product.getById', { id }),
+      );
+    } catch (err) {
+      mapRpcErrorToHttp(err);
+    }
+  }
+
+  @Delete('products/:id')
+  @AdminOnly()
+  async deleteProduct(@Param('id') id: string) {
+    try {
+      return await firstValueFrom(
+        this.catalogClient.send('product.delete', { id }),
       );
     } catch (err) {
       mapRpcErrorToHttp(err);

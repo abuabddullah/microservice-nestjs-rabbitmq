@@ -6,3 +6,7 @@ import { TProduct } from 'apps/gateway/src/products/products.controller';
 export type TProductCreatedEvent = Omit<TProduct, '_id'> & {
   productId: string;
 };
+
+export type TProductDeletedEvent = {
+  productId: string;
+};

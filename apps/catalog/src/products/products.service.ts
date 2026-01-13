@@ -61,4 +61,25 @@ export class ProductService {
 
     return product;
   }
+
+  async deleteProduct(input: GetProductByIdDto) {
+    if (!isValidObjectId(input.id)) {
+      rpcBadRequest('Invaid product ID');
+    }
+
+    const deletedProduct = await this.productModel
+      .findByIdAndDelete(input.id)
+      .exec();
+
+    if (!deletedProduct) {
+      rpcNotFound('Product is not present in DB');
+    }
+
+    // Publish event for deleted product
+    await this.events.productDeleted({
+      productId: String(deletedProduct._id),
+    });
+
+    return deletedProduct;
+  }
 }

@@ -4,6 +4,7 @@ import { EventPattern, MessagePattern } from '@nestjs/microservices';
 import { ProductCreatedDto } from './dto/product-events.dto';
 import { SearchQueryDto } from './dto/search-query.dto';
 import { Payload } from '@nestjs/microservices';
+import type { TProductDeletedEvent } from 'apps/catalog/src/events/product.events';
 
 @Controller()
 export class SearchController {
@@ -11,14 +12,19 @@ export class SearchController {
 
   @EventPattern('product.created')
   async onProductCreated(@Payload() payload: ProductCreatedDto) {
-    console.log(payload, 'test12345');
-
     await this.searchService.upsertFromCatalogEvent({
       productId: payload.productId,
       name: payload.name,
       description: payload.description,
       status: payload.status,
       price: payload.price,
+    });
+  }
+
+  @EventPattern('product.deleted')
+  async onProductDeleted(@Payload() payload: TProductDeletedEvent) {
+    await this.searchService.deleteFromCatalogEvent({
+      productId: payload.productId,
     });
   }
 
